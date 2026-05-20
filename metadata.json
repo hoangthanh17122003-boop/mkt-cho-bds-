@@ -1,0 +1,8 @@
+{
+  "name": "Remix: MKT Software - Zalo Marketing Solution",
+  "description": "A professional landing page for MKT Software\u0027s Zalo Marketing solution, tailored for real estate professionals in Vietnam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

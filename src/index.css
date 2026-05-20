@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-primary: #0054ca;
+  --color-secondary: #ff6b00;
+  --color-tertiary: #007f9c;
+  
+  --radius-xl: 1.5rem;
+  --radius-2xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply font-sans text-[#191c20] bg-[#f8f9ff];
+  }
+}
+
+.glass {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+.card-shadow {
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.card-hover {
+  @apply transition-all duration-300;
+}
+
+.card-hover:hover {
+  @apply -translate-y-1;
+  box-shadow: 0px 8px 30px rgba(0, 84, 202, 0.1);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
