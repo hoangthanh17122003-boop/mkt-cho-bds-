@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useState } from 'react';
+import React from 'react';
 
 // Pricing data
 const PRICING_PLANS = [
@@ -80,7 +81,7 @@ const PRICING_PLANS = [
 const FAQS = [
   {
     question: "Phần mềm có dễ sử dụng không?",
-    answer: "Cực kỳ dễ dàng! Chúng tôi đã tối ưu giao diện hoàn toàn bằng tiếng Việt. Ngoài ra, MKT Software cung cấp bộ video hướng dẫn chi tiết và đội ngũ kỹ thuật sẽ cài đặt trực tiếp qua Ultraview cho bạn."
+    answer: "Cực kỳ dễ dàng! Chúng tôi đã tối ưu giao diện hoàn toàn bằng tiếng Việt. Ngoài ra, MKT Software cung cấp bộ video hướng dẫn chi tiết và đội ngũ kỹ thuật sẽ cài đặt trực tiếp qua UltraViewer cho bạn."
   },
   {
     question: "Có sợ bị khóa tài khoản Zalo không?",
@@ -101,19 +102,22 @@ const TESTIMONIALS = [
     name: "Nguyễn Văn Hùng",
     role: "Giám đốc Sàn BĐS Sun Home",
     content: "Từ ngày dùng MKT Zalo, đội ngũ của tôi không còn phải đi spam dạo nữa. Khách hàng về đều đặn và quan trọng nhất là chi phí marketing giảm tới 60%.",
-    avatar: "H"
+    avatar: "https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?auto=format&fit=crop&q=80&w=150&h=150",
+    initial: "H"
   },
   {
     name: "Trần Thị Lan",
     role: "Môi giới tự do - Vinhomes",
     content: "Phần mềm MKT UID quét data cực chuẩn. Tôi dễ dàng tìm thấy các group cư dân và tiếp cận đúng đối tượng đang có nhu cầu mua nhà.",
-    avatar: "L"
+    avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&q=80&w=150&h=150",
+    initial: "L"
   },
   {
     name: "Lê Minh Tuấn",
     role: "Trưởng phòng Kinh doanh",
     content: "Hỗ trợ kỹ thuật của MKT cực kỳ nhiệt tình. Cài đặt trực tiếp và hướng dẫn tận tay cho đến khi tôi thành thạo. Rất đáng đầu tư!",
-    avatar: "T"
+    avatar: "https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?auto=format&fit=crop&q=80&w=150&h=150",
+    initial: "T"
   }
 ];
 
@@ -152,26 +156,152 @@ function AccordionItem({ question, answer }: AccordionItemProps) {
 }
 
 function ContactForm() {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError('Vui lòng nhập họ và tên');
+      return;
+    }
+    if (!phone.trim()) {
+      setError('Vui lòng nhập số điện thoại');
+      return;
+    }
+    // Simplistic Vietnamese phone validation (10 digits starting with 0 or +84)
+    const normalizedPhone = phone.replace(/\s+/g, '').replace('+84', '0');
+    if (!/^0[35789]\d{8}$/.test(normalizedPhone)) {
+      setError('Số điện thoại không đúng định dạng. Vui lòng kiểm tra lại!');
+      return;
+    }
+
+    setError('');
+    setSuccess(true);
+  };
+
+  if (success) {
+    return (
+      <div className="bg-white p-8 rounded-3xl shadow-2xl border border-emerald-100 text-center flex flex-col items-center justify-center min-h-[350px]">
+        <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mb-6">
+          <CheckCircle2 className="w-10 h-10" />
+        </div>
+        <h3 className="text-2xl font-bold text-slate-900 mb-2">Đăng Ký Thành Công!</h3>
+        <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
+          Cảm ơn bạn <strong className="text-primary">{name}</strong> đã quan tâm. Chuyên viên tư vấn của MKT Software sẽ liên hệ sớm nhất trong vòng 15 phút qua số điện thoại <strong className="text-slate-800">{phone}</strong>.
+        </p>
+        <button 
+          onClick={() => {
+            setSuccess(false);
+            setName('');
+            setPhone('');
+            setMessage('');
+          }}
+          className="mt-6 px-6 py-2 bg-slate-100 text-slate-700 font-bold rounded-lg hover:bg-slate-200 transition-colors"
+        >
+          Đăng ký lại
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-8 rounded-3xl shadow-2xl border border-slate-100">
       <h3 className="text-2xl font-bold mb-6 text-slate-900 tracking-tight">Đăng ký tư vấn giải pháp</h3>
-      <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+      <form className="space-y-4" onSubmit={handleSubmit}>
+        {error && (
+          <div className="p-3 text-sm text-red-600 bg-red-50 rounded-xl border border-red-100 flex items-center gap-2">
+            <AlertTriangle className="w-4 h-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
         <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Họ và tên</label>
-          <input type="text" placeholder="Nguyễn Văn A" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all" />
+          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Họ và tên <span className="text-red-500">*</span></label>
+          <input 
+            type="text" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Nguyễn Văn A" 
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all text-slate-800 font-medium" 
+          />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Số điện thoại (Zalo)</label>
-          <input type="tel" placeholder="09xx xxx xxx" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all" />
+          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Số điện thoại (Zalo) <span className="text-red-500">*</span></label>
+          <input 
+            type="tel" 
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="09xx xxx xxx" 
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all text-slate-800 font-medium" 
+          />
         </div>
         <div>
           <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Lời nhắn</label>
-          <textarea rows={3} placeholder="Tôi muốn tư vấn bộ combo BĐS..." className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none"></textarea>
+          <textarea 
+            rows={3} 
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Tôi muốn tư vấn bộ combo BĐS..." 
+            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all resize-none text-slate-800"
+          ></textarea>
         </div>
-        <button className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">
+        <button 
+          type="submit"
+          className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+        >
           GỬI YÊU CẦU NGAY
         </button>
       </form>
+    </div>
+  );
+}
+
+function NewsletterForm() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !email.includes('@')) {
+      setStatus('error');
+      return;
+    }
+    setStatus('success');
+  };
+
+  if (status === 'success') {
+    return (
+      <div>
+        <h4 className="font-bold mb-8 text-white uppercase text-xs tracking-widest">Đăng ký nhận tin</h4>
+        <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs leading-relaxed font-semibold">
+          🎉 Đăng ký thành công! Hãy kiểm tra hòm thư của bạn để nhận cẩm nang Marketing 0đ nhé.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <h4 className="font-bold mb-8 text-white uppercase text-xs tracking-widest">Đăng ký nhận tin</h4>
+      <p className="text-xs mb-6 italic">Nhận ngay cẩm nang Marketing 0đ cho ngành BĐS.</p>
+      <form onSubmit={handleSubscribe} className="flex overflow-hidden rounded-xl border border-white/10 focus-within:border-primary transition-colors bg-white/5 p-1 relative">
+        <input 
+          type="email" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email của bạn" 
+          className="flex-grow px-4 py-2 text-sm focus:outline-none bg-transparent text-white placeholder-slate-500" 
+        />
+        <button type="submit" className="bg-primary text-white p-2 rounded-lg group">
+          <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+        </button>
+      </form>
+      {status === 'error' && (
+        <p className="text-red-500 text-[11px] mt-2 font-medium">Vui lòng nhập địa chỉ email hợp lệ.</p>
+      )}
     </div>
   );
 }
@@ -443,49 +573,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Solutions Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6 text-center mb-16">
-          <h2 className="text-3xl lg:text-4xl font-bold mb-4 tracking-tight">
-            BỘ GIẢI PHÁP MKT SOFTWARE DÀNH CHO BĐS
-          </h2>
-          <p className="text-slate-500">Hệ sinh thái công cụ hỗ trợ môi giới tìm kiếm khách hàng hiệu quả nhất hiện nay</p>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8">
-          {[
-            { icon: Users2, title: 'Phần mềm MKT UID', color: 'bg-primary' },
-            { icon: MessageCircle, title: 'Phần mềm MKT Zalo', color: 'bg-orange-500', popular: true },
-            { icon: MapPin, title: 'Phần mềm MKT Maps', color: 'bg-cyan-500' }
-          ].map((item, i) => (
-            <motion.div 
-              key={i} 
-              whileInView={{ opacity: 1, y: 0 }}
-              initial={{ opacity: 0, y: 30 }}
-              viewport={{ once: true }}
-              className={`p-10 rounded-2xl bg-white border border-slate-100 card-shadow card-hover relative group ${item.popular ? 'border-orange-200' : ''}`}
-            >
-              {item.popular && (
-                <div className="absolute top-0 right-0 bg-orange-500 text-white px-4 py-1 rounded-bl-xl rounded-tr-2xl text-[10px] font-bold uppercase tracking-widest">
-                  PHỔ BIẾN NHẤT
-                </div>
-              )}
-              <div className={`w-16 h-16 ${item.color} text-white rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
-                <item.icon className="w-8 h-8" />
-              </div>
-              <h3 className="text-xl font-bold mb-6">{item.title}</h3>
-              <ul className="space-y-4">
-                {PRICING_PLANS[i].features.map((feat, j) => (
-                  <li key={j} className="flex items-start gap-3 text-slate-600 text-sm">
-                    <CheckCircle2 className="w-4 h-4 text-primary mt-1 shrink-0" />
-                    <span>{feat}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+
 
       {/* Pricing Section (Overhauled to single premium solution pack) */}
       <section id="Bảng giá" className="py-24 bg-gradient-to-b from-slate-50 to-slate-100">
@@ -590,7 +678,7 @@ export default function App() {
                     Trị giá thực tế: 13.000.000đ
                   </span>
                   <div className="flex items-baseline justify-center lg:justify-start gap-1">
-                    <span className="font-extrabold text-6xl tracking-tight text-white">9tr</span>
+                    <span className="font-extrabold text-6xl tracking-tight text-white">8Tr</span>
                     <span className="text-xl font-bold text-cyan-300">/ Năm</span>
                   </div>
                 </div>
@@ -606,7 +694,7 @@ export default function App() {
                     Chương trình ưu đãi có hạn
                   </p>
                   <p className="text-xs text-white/80 leading-relaxed text-center lg:text-left font-medium">
-                    Chỉ áp dụng mức giá <span className="font-bold text-white text-sm">9tr/năm</span> cho <span className="font-black text-amber-300 text-sm">3 khách hàng đầu tiên</span> đăng ký trong ngày hôm nay!
+                    Chỉ áp dụng mức giá <span className="font-bold text-white text-sm">8tr/năm</span> cho <span className="font-black text-amber-300 text-sm">3 khách hàng đầu tiên</span> đăng ký trong ngày hôm nay!
                   </p>
                 </div>
               </div>
@@ -702,15 +790,24 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 initial={{ opacity: 0, y: 20 }}
                 viewport={{ once: true }}
-                className="p-8 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center text-center group transition-all"
+                className="p-8 rounded-3xl bg-slate-50 border border-slate-100 flex flex-col items-center text-center group transition-all hover:bg-white hover:shadow-xl hover:border-slate-200 duration-300"
               >
-                <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center font-bold text-xl mb-6">
-                  {t.avatar}
+                <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center mb-6 shadow-lg border-4 border-primary/10 group-hover:border-primary/30 transition-all duration-300 relative bg-primary/5">
+                  {t.avatar ? (
+                    <img 
+                      src={t.avatar} 
+                      alt={t.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <span className="font-bold text-2xl text-primary">{t.initial}</span>
+                  )}
                 </div>
                 <p className="text-slate-600 italic mb-6 leading-relaxed">"{t.content}"</p>
                 <div className="mt-auto">
-                  <h4 className="font-bold text-slate-900">{t.name}</h4>
-                  <p className="text-xs text-primary font-medium">{t.role}</p>
+                  <h4 className="font-bold text-slate-900 group-hover:text-primary transition-colors duration-300">{t.name}</h4>
+                  <p className="text-xs text-primary font-semibold uppercase tracking-wider mt-1">{t.role}</p>
                 </div>
               </motion.div>
             ))}
@@ -795,7 +892,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="py-20 bg-[#060b1a] text-slate-400 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-12 mb-16">
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-8">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-primary/20">
@@ -825,17 +922,6 @@ export default function App() {
           </div>
           
           <div>
-            <h4 className="font-bold mb-8 text-white uppercase text-xs tracking-widest">Sản phẩm chính</h4>
-            <ul className="space-y-4">
-              {['Phần mềm MKT Zalo', 'Phần mềm MKT UID', 'Phần mềm MKT Maps'].map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-sm hover:text-primary transition-colors inline-block">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div>
             <h4 className="font-bold mb-8 text-white uppercase text-xs tracking-widest">Thông tin công ty</h4>
             <div className="space-y-4 text-sm leading-relaxed">
               <p className="flex items-start gap-3">
@@ -853,16 +939,7 @@ export default function App() {
             </div>
           </div>
           
-          <div>
-            <h4 className="font-bold mb-8 text-white uppercase text-xs tracking-widest">Đăng ký nhận tin</h4>
-            <p className="text-xs mb-6 italic">Nhận ngay cẩm nang Marketing 0đ cho ngành BĐS.</p>
-            <div className="flex overflow-hidden rounded-xl border border-white/10 focus-within:border-primary transition-colors bg-white/5 p-1">
-              <input type="text" placeholder="Email của bạn" className="flex-grow px-4 py-2 text-sm focus:outline-none bg-transparent text-white" />
-              <button className="bg-primary text-white p-2 rounded-lg group">
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
+          <NewsletterForm />
         </div>
         
         <div className="text-center pt-10 border-t border-white/5">
@@ -877,7 +954,7 @@ export default function App() {
         <a href="tel:0824512799" className="w-14 h-14 bg-secondary text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all animate-bounce">
           <Phone className="w-6 h-6" />
         </a>
-        <a href="#" className="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all">
+        <a href="https://zalo.me/0824512799" target="_blank" rel="noopener noreferrer" className="w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 active:scale-95 transition-all">
           <MessageCircle className="w-7 h-7" />
         </a>
       </div>
