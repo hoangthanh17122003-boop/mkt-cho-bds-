@@ -354,9 +354,10 @@ function ConversionModal({ isOpen, onClose }: ModalProps) {
               
               <div className="rounded-2xl overflow-hidden mb-6 aspect-video">
                 <img 
-                  src="/src/assets/images/modal_promotion_image_1779209305346.png" 
+                  src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?auto=format&fit=crop&q=80&w=600&h=400" 
                   alt="Promotion" 
                   className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
                 />
               </div>
               
@@ -498,7 +499,7 @@ export default function App() {
           >
             <div className="absolute -inset-4 bg-primary/10 rounded-[2.5rem] blur-2xl -z-10" />
             <img 
-              src="/src/assets/images/mkt_zalo_real_estate_hero_1779209137036.png" 
+              src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&q=80&w=800" 
               alt="MKT Zalo Real Estate Hero Illustration" 
               className="w-full h-auto rounded-2xl shadow-2xl animate-float"
               referrerPolicy="no-referrer"
@@ -751,7 +752,7 @@ export default function App() {
           >
             <div className="absolute -inset-10 bg-slate-100 rounded-full blur-3xl -z-10" />
             <img 
-              src="/src/assets/images/mkt_software_illustration_1779208636135.png" 
+              src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800" 
               alt="MKT Software Suite" 
               className="rounded-3xl shadow-2xl w-full object-cover aspect-video"
               referrerPolicy="no-referrer"
